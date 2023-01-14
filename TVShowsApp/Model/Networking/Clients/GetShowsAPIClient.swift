@@ -10,8 +10,9 @@ import Foundation
 
 struct GetShowsAPIClient: APINetworkingClient {
     
-    static func getShows() async -> (GetShowsResponse?, LocalizedError?) {
-        let endpoint = GetShowsEndpoint()
+    static func getShows(pageNo:Int) async -> (GetShowsResponse?, LocalizedError?) {
+        var endpoint = GetShowsEndpoint()
+        endpoint.parameters = ["page":"\(pageNo)"]
         let result = await self.sendRequest(endpoint: endpoint, responseType: GetShowsResponse.self)
         switch result {
             case .success(let seriesResponse):

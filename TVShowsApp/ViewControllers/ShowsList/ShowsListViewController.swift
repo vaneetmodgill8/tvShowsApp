@@ -38,6 +38,12 @@ class ShowsListViewController: UIViewController {
 
 //MARK: CollectionView Delegate and DataSourse
 extension ShowsListViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row == self.viewModel.showsArray.count - 1 {
+            self.viewModel.pageNo += 1
+            self.viewModel.getTVShows()
+        }
+    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.viewModel.showsArray.count
@@ -45,8 +51,8 @@ extension ShowsListViewController: UICollectionViewDelegate, UICollectionViewDat
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShowsCollectionViewCell.className, for: indexPath) as? ShowsCollectionViewCell
-            cell?.setupData(data: self.viewModel.showsArray[indexPath.row])
-            return cell ?? UICollectionViewCell()
+        cell?.setupData(data: self.viewModel.showsArray[indexPath.row])
+        return cell ?? UICollectionViewCell()
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -59,6 +65,8 @@ extension ShowsListViewController: UICollectionViewDelegate, UICollectionViewDat
         let width = (collectionView.frame.size.width - 20) / 3.0
         return CGSize(width: width, height: width * (collectionView.frame.size.height / collectionView.frame.size.width))
     }
+    
+
 }
 
 
@@ -66,11 +74,17 @@ extension ShowsListViewController: UICollectionViewDelegate, UICollectionViewDat
 extension ShowsListViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         self.showLoading()
+        if searchBar.text?.replacingOccurrences(of: " ", with: "") == "" {
+            self.viewModel.pageNo = 0
+        }
         self.viewModel.getTVShows(searchKeyword: searchBar.text)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         self.showLoading()
+        if searchBar.text?.replacingOccurrences(of: " ", with: "") == "" {
+            self.viewModel.pageNo = 0
+        }
         self.viewModel.getTVShows()
     }
  }

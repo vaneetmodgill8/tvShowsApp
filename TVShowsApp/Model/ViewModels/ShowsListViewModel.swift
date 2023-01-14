@@ -11,7 +11,7 @@ import Foundation
 class ShowsListViewModel {
     
     var showsArray = [Shows]()
-    var hasMoreShows: Bool = true
+    var pageNo = 0
     weak var delegate: ViewModelDelegate?
     private var searchKeyword: String = ""
     
@@ -28,27 +28,30 @@ class ShowsListViewModel {
 
     
     private func getTVShows() async {
-        self.showsArray.removeAll()
-        let (shows, error) = await GetShowsAPIClient.getShows()
-        self.hasMoreShows = false
+        if pageNo == 0 {
+            self.showsArray.removeAll()
+        }
+        let (shows, error) = await GetShowsAPIClient.getShows(pageNo: pageNo)
         guard let newShows = shows else {
             self.delegate?.handleError(error: error)
             return
         }
         if !newShows.isEmpty {
             self.showsArray.append(contentsOf: newShows)
-            self.hasMoreShows = true
         }
         self.delegate?.update(withResult: self.showsArray)
     }
     
     private func searchTVShows(name: String? = nil) async {
         if name != self.searchKeyword {
+            pageNo = 0
+            self.showsArray.removeAll()
+        }
+        if pageNo == 0 {
             self.showsArray.removeAll()
         }
         self.searchKeyword = name ?? ""
         let (shows, error) = await GetShowsAPIClient.getSearchedShows(name: self.searchKeyword)
-        self.hasMoreShows = false
         guard let newShows = shows else {
             self.delegate?.handleError(error: error)
             return
@@ -56,7 +59,6 @@ class ShowsListViewModel {
         if !newShows.isEmpty {
             let seriesFromResults = GetSearchedShowsResponseContent.arrayOfSeries(responses: newShows)
             self.showsArray.append(contentsOf: seriesFromResults)
-            self.hasMoreShows = true
         }
         self.delegate?.update(withResult: self.showsArray)
     }
