@@ -27,7 +27,7 @@ class EpisodeDetailViewController: UIViewController {
         }
         self.nameLabel.text = episode.name
         self.posterImageView.getImage(url: episode.image?.original ?? "", placeholderImage: UIImage(named: Constants.ImagesName.placeholderImage))
-        self.seasonLabel.text = "S\(episode.season) E\(episode.number)"
+        self.seasonLabel.text = "S\(episode.season) E\(episode.number) \nRating: \(episode.rating?.average ?? 0)"
         if let summary = episode.summary, !summary.isEmpty {
             self.summaryLabel.text = summary.html2String.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         }

@@ -8,14 +8,21 @@ import Foundation
 
 
 struct Episode: Codable {
-    
+
     let id: Int
     let name: String
     let season, number: Int
     let image: Image?
     let summary: String?
+    let rating: Rating?
+    let airdate: String?
+
 
     enum CodingKeys: String, CodingKey {
-        case id, name, season, number, image, summary
+        case id, name, season, number, image, summary, rating, airdate
     }
 }
+
+
+
+

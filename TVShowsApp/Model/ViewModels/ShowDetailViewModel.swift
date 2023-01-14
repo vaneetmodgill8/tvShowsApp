@@ -17,7 +17,7 @@ class ShowDetailViewModel {
         guard let show = show else {
             return
         }
-        let showID = show.id
+        let showID = show.id ?? 0
         let (episodes, error) = await GetShowDetailClient.getEpisodes(showID: showID)
         if let episodes = episodes {
             self.splitEpisodesBySeason(episodes: episodes.embedded.episodes)
